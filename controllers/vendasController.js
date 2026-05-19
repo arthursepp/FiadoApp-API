@@ -91,8 +91,8 @@ class VendasController {
 
         try {
 
-            console.log('PARAMS:', req.params)
-            console.log('BODY:', req.body)
+            // console.log('PARAMS:', req.params)
+            // console.log('BODY:', req.body)
 
             const { venda_ids } = req.body;
 

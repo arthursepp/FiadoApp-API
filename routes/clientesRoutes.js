@@ -8,6 +8,10 @@ const authMiddleware = require('../middlewares/authMiddleware');
 
 router.use(authMiddleware);
 
+router.get('/meus-clientes', (req, res) =>
+    clientesController.listarMeus(req, res)
+);
+
 router.get('/', (req, res) =>
     clientesController.listar(req, res)
 );

@@ -3,6 +3,23 @@ const clientesService = require('../services/clientesService');
 
 class ClientesController {
 
+    async listarMeus(req, res) {
+
+        try {
+            const clientes = await clientesService.listarMeus(
+                req.usuario.id
+            );
+
+            return res.json(clientes);
+
+        } catch (error) {
+
+            return res.status(500).json({
+                erro: error.message
+            });
+        }
+    }
+
     async listar(req, res) {
 
         try {

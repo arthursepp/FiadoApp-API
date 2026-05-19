@@ -3,15 +3,27 @@ const db = require('../config/database');
 
 class ClientesRepository {
 
-    async findAllByUsuario(usuarioId) {
+    async findAllByUsuarioComStats(usuarioId) {
 
         const result = await db.query(
             `
-            SELECT *
-            FROM clientes
-            WHERE usuario_id = $1
-            ORDER BY id DESC
-            `,
+        SELECT
+            c.id,
+            c.nome,
+            c.sobrenome,
+            c.referencia,
+            c.telefone,
+            c.limite_credito,
+            c.criado_em,
+            COUNT(CASE WHEN v.status = 'PAGA' THEN 1 END)                    AS qtd_vendas_pagas,
+            COUNT(CASE WHEN v.status = 'ATIVA' THEN 1 END)                   AS qtd_vendas_abertas,
+            COALESCE(SUM(CASE WHEN v.status = 'ATIVA' THEN v.valor_total ELSE 0 END), 0) AS valor_devido
+        FROM clientes c
+        LEFT JOIN vendas v ON v.cliente_id = c.id
+        WHERE c.usuario_id = $1
+        GROUP BY c.id, c.nome, c.sobrenome, c.referencia, c.telefone, c.limite_credito, c.criado_em
+        ORDER BY c.id DESC
+        `,
             [usuarioId]
         );
 
@@ -204,16 +216,16 @@ class ClientesRepository {
             const valor = parseFloat(v.valor_total);
             acc.total_vendas++;
             acc.valor_total += valor;
-            if (v.status === 'ATIVA')     { acc.vendas_ativas++;    acc.valor_em_aberto  += valor; }
-            if (v.status === 'PAGA')      { acc.vendas_pagas++;     acc.valor_pago       += valor; }
+            if (v.status === 'ATIVA') { acc.vendas_ativas++; acc.valor_em_aberto += valor; }
+            if (v.status === 'PAGA') { acc.vendas_pagas++; acc.valor_pago += valor; }
             return acc;
         }, {
-            total_vendas:   0,
-            vendas_ativas:  0,
-            vendas_pagas:   0,
-            valor_total:    0,
+            total_vendas: 0,
+            vendas_ativas: 0,
+            vendas_pagas: 0,
+            valor_total: 0,
             valor_em_aberto: 0,
-            valor_pago:     0
+            valor_pago: 0
         });
 
         return { ...cliente, resumo, vendas: vendasCompletas };

@@ -75,6 +75,10 @@ class ClientesService {
 
         return cliente;
     }
+
+    async listarMeus(usuarioId) {
+        return await clientesRepository.findAllByUsuarioComStats(usuarioId);
+    }
 }
 
 module.exports = new ClientesService();
