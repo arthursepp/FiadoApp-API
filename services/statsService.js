@@ -13,6 +13,7 @@ class StatsService {
             total_receber: parseFloat(stats.total_receber),
             total_ativas: parseInt(stats.total_ativas),
             total_inadimplentes: parseInt(stats.total_inadimplentes),
+            clientes_com_vendas_ativas: parseInt(stats.clientes_com_vendas_ativas),
             total_clientes: parseInt(stats.total_clientes)
         };
     }
@@ -37,18 +38,20 @@ class StatsService {
                 faturamento_bruto: parseFloat(resumo.faturamento_bruto),
                 total_recebido: parseFloat(resumo.total_recebido),
                 total_aberto: parseFloat(resumo.total_aberto),
+                vendas_quitadas: parseInt(resumo.vendas_quitadas),
+                vendas_abertas: parseInt(resumo.vendas_abertas),
                 clientes_atendidos: parseInt(resumo.clientes_atendidos)
             },
-            por_dia: porDia.map(r => ({
+            faturamento_por_dia: porDia.map(r => ({
                 dia: r.dia,
                 total: parseFloat(r.total),
                 qtd: parseInt(r.qtd)
             })),
             top_clientes: topClientes.map(r => ({
-                nome: r.nome,
-                referencia: r.referencia,
-                total: parseFloat(r.total),
-                qtd_vendas: parseInt(r.qtd_vendas)
+                nome: `${r.nome}${r.sobrenome ? ' ' + r.sobrenome : ''}`.trim(),
+                referencia: r.referencia || null,
+                qtd_vendas: parseInt(r.qtd_vendas),
+                total: parseFloat(r.total)
             })),
             por_status: porStatus.map(r => ({
                 status: r.status,

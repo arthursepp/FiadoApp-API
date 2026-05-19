@@ -3,8 +3,8 @@ const clientesRepository = require('../repositories/clientesRepository');
 
 class ClientesService {
 
-    async listar(usuarioId) {
-        return await clientesRepository.findAllByUsuario(usuarioId);
+    async listar(usuarioId, nome = null) {
+        return await clientesRepository.findAllByUsuario(usuarioId, nome);
     }
 
     async buscar(id, usuarioId) {

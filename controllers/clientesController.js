@@ -24,7 +24,8 @@ class ClientesController {
 
         try {
             const clientes = await clientesService.listar(
-                req.usuario.id
+                req.usuario.id,
+                req.query.nome || null
             );
 
             return res.json(clientes);

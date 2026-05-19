@@ -3,6 +3,38 @@ const db = require('../config/database');
 
 class ClientesRepository {
 
+    async findAllByUsuario(usuarioId, nome = null) {
+
+        const conditions = ['c.usuario_id = $1'];
+        const params = [usuarioId];
+
+        if (nome) {
+            conditions.push(`(c.nome ILIKE $2 OR c.sobrenome ILIKE $2)`);
+            params.push(`%${nome}%`);
+        }
+
+        const where = conditions.join(' AND ');
+
+        const result = await db.query(
+            `
+            SELECT
+                c.id,
+                c.nome,
+                c.sobrenome,
+                c.referencia,
+                c.telefone,
+                c.limite_credito,
+                c.criado_em
+            FROM clientes c
+            WHERE ${where}
+            ORDER BY c.nome ASC
+            `,
+            params
+        );
+
+        return result.rows;
+    }
+
     async findAllByUsuarioComStats(usuarioId) {
 
         const result = await db.query(
